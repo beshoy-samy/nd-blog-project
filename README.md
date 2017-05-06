@@ -7,4 +7,4 @@ Run application localy:
 - download google app engine and luanch it 
 - add this project to gae 4- in url type localhost/projectport/blog
 
-### you can also test it online at this [url](https://nd-blog.appspot.com/log)
+### you can also test it online at this [url](https://nd-blog.appspot.com/blog)

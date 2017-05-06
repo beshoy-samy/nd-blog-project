@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row">
+      <div class="col-md-12">
+            <br>
+            <h3 class="text-uppercase" align="center">new post</h3>
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <form method="post">
+          <div class="form-group">
+          <label>Subject</label>
+          <input name="subject" class="form-control" placeholder="Subject" value="{{subject}}">
+          </div>
+
+          <div class="form-group">
+          <label>Blog</label>
+          <textarea name="content" class="form-control"  placeholder="your story" rows="10">{{content}}</textarea>
+          <br>
+          <label class="error">{{error}}</label>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <br>
+      </div>
+    </div>
+{% endblock %}

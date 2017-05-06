@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row">
+      <div class="col-md-12">
+            <br>
+            <h3 class="text-uppercase" align="center">Edit your post</h3>
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <form method="post">
+          <div class="form-group">
+          <label>Subject</label>
+          <input name="post_subject" class="form-control" placeholder="Subject" value="{{subject}}">
+          </div>
+
+          <div class="form-group">
+          <label>Blog</label>
+          <textarea name="post_content" class="form-control"  placeholder="your story" rows="10">{{content}}</textarea>
+          <br>
+          <label class="error">{{error}}</label>
+          </div>
+          <input type="submit" class="btn btn-primary btn-lg" name="post-editted">
+          <a href="/blog"><button  type="button" class="btn btn-default btn-lg">CANCEL</button></a>
+          <input type="hidden" name="post_userid" value={{post_userid}}>
+          <input type="hidden" name="key" value={{key}}>
+        </form>
+        <br>
+      </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,82 @@
+.post + .post {
+    margin-top: 15px;
+}
+
+.post-heading {
+    position: relative;
+    border-bottom: 3px solid #666;
+}
+
+.post-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.post-date {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    color: #999;
+
+}
+
+.post-content {
+    margin-top: 5px;
+}
+
+.img-thumbnail{
+  max-height: 400px;
+  width: 100%;
+}
+
+.btn-primary{
+    background: #004d40;
+    margin-top: 10px;
+}
+
+.vertical-offset-100{
+    margin-top: 20px;
+}
+
+.error{
+    color: red;
+}
+
+.comment{
+    margin-left: 20px;
+    color: blue;
+}
+
+.edit{
+    float: right;
+    color: green;
+}
+
+.delete{
+    float: right;
+    color: red;
+}
+
+.edit-comment{
+    float: left;
+    color: green;
+}
+
+.delete-comment{
+    float: left;
+    color: red;
+}
+
+.com{
+    margin-top: 10px;
+}
+
+.likes{
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    color: #999;
+    margin-right: 100px;
+    font-size: 18px;
+    font-weight: bold;
+}

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% for p in posts %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="post-heading post">
+
+                <div class="post-title post">
+                  {{p.subject}}
+                </div>
+
+                <div class="likes">
+                {% set counter = 0 %}
+                {% if likes.count() == 0 %}
+                        {{counter}} likes
+                {% else %}
+                    {% for like in likes %}
+                        {% if (like.post_id == p.key().id()|string) %}
+                            {% set counter = counter + 1 %}
+                        {% endif %}
+                        {% if likes.count() == loop.index %}
+                            {{counter}}
+                        {% endif %}
+                    {% endfor %}
+                    likes
+                {% endif %}
+                </div>
+
+                <div class="post-date post">
+                {{p.created.strftime("%b %d, %Y")}}
+                </div>
+
+                </div>
+
+            {% if p.user_id == user_id %}
+                <form method="post">
+                    <input type="submit" name="edit-post" class="edit" value="edit">
+                    <input type="submit" name="delete-post" class="delete" value="delete">
+                    <input type="hidden" name="post-id" value={{p.key().id()}}>
+                    <input type="hidden" name="post-userid" value={{p.user_id}} >
+                </form>
+            {% endif %}
+
+            <div class="post-content post">
+                {{p.content| safe}}
+            </div>
+
+            </div>
+        </div>
+        <br>
+        <!-- show comments if exists -->
+        {% if comments %}
+            {% for comment in comments %}
+                {% if (comment.post_id) == p.key().id()|string %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4 class="media-heading user_name com">{{comment.user_name}} commented:</h>
+                            <p class="comment">{{comment.content}}</p>
+                    {% if comment.user_id == user_id %}
+                    <form method="post">
+                    <input type="submit" name="edit-comment" class="edit-comment" value="edit">
+                    <input type="submit" name="delete-comment" class="delete-comment" value="delete">
+                    <input type="hidden" name="comment-userid" value={{comment.user_id}}>
+                    <input type="hidden" name="comment-id" value={{comment.key().id()}}>
+                    </form>
+                    {% endif %}
+                        </div>
+                    </div>
+
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        <br>
+
+        <!-- add comment section -->
+        <div class="row">
+            <form method="POST">
+                <div class= "col-md-12">
+                    <div class="form-group">
+                        <label for="comment">Comment:</label>
+                        <textarea class="form-control" name="content" rows="2" id="comment"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <input class="btn btn-primary btn-lg" type="submit" value="comment it">
+                    </div>
+                    <input type="hidden" name="post-id" value={{p.key().id()}} >
+                </div>
+                {% if p.user_id != user_id %}
+                <div class="col-md-2">
+                    {% if likes.count() == 0 %}
+                        <div class="form-group">
+                            <input class="btn btn-primary btn-lg" type="submit" value="like" name="like">
+                        </div>
+                    {% else %}
+
+                        {% for like in likes %}
+                            {% if (like.post_id) == (p.key().id()|string) and (like.user_id) == user_id %}
+                                {% set counter = 1 %}
+                                <div class="form-group">
+                                    <input class="btn btn-primary btn-lg" type="submit" value="unlike" name="unlike">
+                                </div>
+                            {% endif %}
+                            {% if likes.count() == loop.index %}
+                                {% if counter != 1%}
+                                <div class="form-group">
+                                    <input class="btn btn-primary btn-lg" type="submit" value="like" name="like">
+                                </div>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                    {% endif %}
+                    <input type="hidden" name="post-id" value={{p.key().id()}} >
+                </div>
+                {% endif %}
+            </form>
+        </div>
+
+    {% endfor %}
+
+{% endblock %}

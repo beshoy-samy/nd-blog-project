@@ -21,25 +21,44 @@
         </div>
 
         <div class="row">
-            <div class="col-md-3">
-                <a href="/signup"><button  type="button" class="btn btn-primary btn-lg center-block" id="homebtn">Register</button></a>
-            </div>
+            {% if not is_logged_in %}
+                <div class="col-md-3">
+                    <a href="/signup"><button  type="button" class="btn btn-primary btn-lg center-block" id="homebtn">Register</button></a>
+                </div>
 
-            <div class="col-md-3">
+                <div class="col-md-3">
                 <a href="/blog/newpost"><button  type="button" class="btn btn-primary btn-lg center-block" id="homebtn">Post a Blog</button></a>
-            </div>
+                </div>
 
-            <div class="col-md-3">
-                <a href="/blog"><button  type="button" class="btn btn-primary btn-lg center-block" id="homebtn">My Blog</button></a>
-            </div>
+                <div class="col-md-3">
+                    <a href="/blog"><button  type="button" class="btn btn-primary btn-lg center-block" id="homebtn">My Blog</button></a>
+                </div>
 
-            <div class="col-md-3">
-                {% if not is_logged_in %}
-                    <a href="/login"><button  type="button" class="btn btn-primary btn-lg center-block" id="homebtn">Login</button></a>
-                {% else %}
-                    <a href="/logout"><button  type="button" class="btn btn-primary btn-lg center-block" id="homebtn">Logout</button></a>
-                {% endif %}
-            </div>
+                <div class="col-md-3">
+                    {% if not is_logged_in %}
+                        <a href="/login"><button  type="button" class="btn btn-primary btn-lg center-block" id="homebtn">Login</button></a>
+                    {% else %}
+                        <a href="/logout"><button  type="button" class="btn btn-primary btn-lg center-block" id="homebtn">Logout</button></a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="col-md-4">
+                <a href="/blog/newpost"><button  type="button" class="btn btn-primary btn-lg center-block" id="homebtn">Post a Blog</button></a>
+                </div>
+
+                <div class="col-md-4">
+                    <a href="/blog"><button  type="button" class="btn btn-primary btn-lg center-block" id="homebtn">My Blog</button></a>
+                </div>
+
+                <div class="col-md-4">
+                    {% if not is_logged_in %}
+                        <a href="/login"><button  type="button" class="btn btn-primary btn-lg center-block" id="homebtn">Login</button></a>
+                    {% else %}
+                        <a href="/logout"><button  type="button" class="btn btn-primary btn-lg center-block" id="homebtn">Logout</button></a>
+                    {% endif %}
+                </div>
+            {% endif %}
+
         </div>
         {% block content %}
         {% endblock %}

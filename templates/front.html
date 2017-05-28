@@ -34,8 +34,12 @@
                 </div>
 
             {% if p.user_id == user_id %}
-                <form method="post">
+                <form method="post" action="/blog/edit-post">
                     <input type="submit" name="edit-post" class="edit" value="edit">
+                    <input type="hidden" name="post-id" value={{p.key().id()}}>
+                    <input type="hidden" name="post-userid" value={{p.user_id}} >
+                </form>
+                <form method="post">
                     <input type="submit" name="delete-post" class="delete" value="delete">
                     <input type="hidden" name="post-id" value={{p.key().id()}}>
                     <input type="hidden" name="post-userid" value={{p.user_id}} >
@@ -58,11 +62,15 @@
                             <h4 class="media-heading user_name com">{{comment.user_name}} commented:</h>
                             <p class="comment">{{comment.content}}</p>
                     {% if comment.user_id == user_id %}
-                    <form method="post">
+                    <form method="post" action="/blog/edit-comment">
                     <input type="submit" name="edit-comment" class="edit-comment" value="edit">
-                    <input type="submit" name="delete-comment" class="delete-comment" value="delete">
                     <input type="hidden" name="comment-userid" value={{comment.user_id}}>
                     <input type="hidden" name="comment-id" value={{comment.key().id()}}>
+                    </form>
+                    <form method="post">
+                        <input type="submit" name="delete-comment" class="delete-comment" value="delete">
+                        <input type="hidden" name="comment-userid" value={{comment.user_id}}>
+                        <input type="hidden" name="comment-id" value={{comment.key().id()}}>
                     </form>
                     {% endif %}
                         </div>
@@ -84,7 +92,7 @@
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <input class="btn btn-primary btn-lg" type="submit" value="comment it">
+                        <input class="btn btn-primary btn-lg" type="submit" value="Comment">
                     </div>
                     <input type="hidden" name="post-id" value={{p.key().id()}} >
                 </div>
@@ -93,6 +101,7 @@
                     {% if likes.count() == 0 %}
                         <div class="form-group">
                             <input class="btn btn-primary btn-lg" type="submit" value="like" name="like">
+                            <input type="hidden" name="post-userid" value={{p.user_id}} >
                         </div>
                     {% else %}
 
@@ -101,12 +110,14 @@
                                 {% set counter = 1 %}
                                 <div class="form-group">
                                     <input class="btn btn-primary btn-lg" type="submit" value="unlike" name="unlike">
+                                    <input type="hidden" name="post-userid" value={{p.user_id}} >
                                 </div>
                             {% endif %}
                             {% if likes.count() == loop.index %}
                                 {% if counter != 1%}
                                 <div class="form-group">
                                     <input class="btn btn-primary btn-lg" type="submit" value="like" name="like">
+                                    <input type="hidden" name="post-userid" value={{p.user_id}} >
                                 </div>
                                 {% endif %}
                             {% endif %}

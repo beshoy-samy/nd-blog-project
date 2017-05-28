@@ -103,7 +103,7 @@ class Handler(webapp2.RequestHandler):
         self.response.out.write(*a, **kw)
 
     def render_str(self, template, **params):
-        params['user'] = self.user
+        #params['user'] = self.user
         t = jinja_env.get_template(template)
         return t.render(params)
 
@@ -130,22 +130,11 @@ class MainHandler(Handler):
             post_id = self.request.get('post-id')
             like = self.request.get('like')
             unlike = self.request.get('unlike')
-            edit_post = self.request.get('edit-post')
-            post_editted = self.request.get('post-editted')
-            posteditted_userid = self.request.get('post_userid')
-            post_subject = self.request.get('post_subject')
-            post_content = self.request.get('post_content')
-            post_key = self.request.get('key')
             del_post = self.request.get('delete-post')
-            edit_comment = self.request.get('edit-comment')
             del_comment = self.request.get('delete-comment')
             post_userid = self.request.get('post-userid')
             comment_userid = self.request.get('comment-userid')
             comment_id = self.request.get('comment-id')
-            comment_editted = self.request.get('comment_editted')
-            commentedit_userid = self.request.get('commentedit_userid')
-            commentedit_key = self.request.get('commentedit_key')
-            comment_content = self.request.get('comment_content')
 
             if content:
                 comment = Comment(
@@ -155,11 +144,11 @@ class MainHandler(Handler):
                     user_id=utils.get_userID(self))
                 comment.put()
                 self.redirect('/blog')
-            elif like:
+            elif like and post_userid != utils.get_userID(self):
                 like = Likes(post_id=post_id, user_id=utils.get_userID(self))
                 like.put()
                 self.redirect('/blog')
-            elif unlike:
+            elif unlike and post_userid != utils.get_userID(self):
                 likes = db.GqlQuery(
                     "SELECT * FROM Likes WHERE post_id =:1", post_id)
                 for like in likes:
@@ -186,59 +175,9 @@ class MainHandler(Handler):
                     db.delete(comment)
                 self.redirect('/blog')
 
-            elif edit_comment and comment_userid == utils.get_userID(self):
-                key = db.Key.from_path('Comment', long(comment_id))
-                comment = db.get(key)
-                if comment:
-                    self.render(
-                        "edit-comment.html",
-                        comment=comment.content,
-                        is_logged_in=True,
-                        comment_userid=comment_userid,
-                        key=key)
+            else:
+                self.response.out.write(post_userid)
 
-            elif comment_editted and commentedit_userid == utils.get_userID(self):
-                comment = db.get(commentedit_key)
-                if comment and comment_content:
-                    comment.content = comment_content
-                    comment.put()
-                    self.redirect('/blog')
-                else:
-                    self.render(
-                        "edit-comment.html",
-                        comment=comment.content,
-                        is_logged_in=True,
-                        comment_userid=commentedit_userid,
-                        key=commentedit_key,
-                        error="comment can't be empty")
-
-            elif edit_post and post_userid == utils.get_userID(self):
-                key = db.Key.from_path('Post', long(post_id))
-                post = db.get(key)
-                if post:
-                    self.render(
-                        "edit-post.html",
-                        subject=post.subject,
-                        content=post.content,
-                        is_logged_in=True,
-                        post_userid=post_userid,
-                        key=key)
-            elif post_editted and posteditted_userid == utils.get_userID(self):
-                post = db.get(post_key)
-                if post and post_subject and post_content:
-                    post.subject = post_subject
-                    post.content = post_content
-                    post.put()
-                    self.redirect('/blog')
-                else:
-                    self.render(
-                        "edit-post.html",
-                        subject=post_subject,
-                        content=post_content,
-                        is_logged_in=True,
-                        post_userid=posteditted_userid,
-                        key=post_key,
-                        error="something is missing!")
 
     def set_secure_cookie(self, name, val, remember):
         cookie_val = utils.create_secure_cookie_val(val)
@@ -267,6 +206,95 @@ class MainHandler(Handler):
         webapp2.RequestHandler.initialize(self, *a, **kw)
         uid = self.read_secure_cookie('user_id')
         self.user = uid and User.by_id(int(uid))
+
+
+class EditComment(Handler):
+
+    def get(self):
+        self.render("edit-comment.html")
+
+    def post(self):
+        if utils.is_loggedIn(self):
+            edit_comment = self.request.get('edit-comment')
+            comment_userid = self.request.get('comment-userid')
+            comment_id = self.request.get('comment-id')
+            comment_editted = self.request.get('comment_editted')
+            commentedit_userid = self.request.get('commentedit_userid')
+            commentedit_key = self.request.get('commentedit_key')
+            comment_content = self.request.get('comment_content')
+            if edit_comment and comment_userid == utils.get_userID(self):
+                key = db.Key.from_path('Comment', long(comment_id))
+                comment = db.get(key)
+                if comment:
+                    self.render(
+                        "edit-comment.html",
+                        comment=comment.content,
+                        is_logged_in=True,
+                        comment_userid=comment_userid,
+                        key=key)
+
+            elif comment_editted and commentedit_userid == utils.get_userID(self):
+                comment = db.get(commentedit_key)
+                if comment and comment_content:
+                    comment.content = comment_content
+                    comment.put()
+                    self.redirect('/blog')
+                else:
+                    self.render(
+                        "edit-comment.html",
+                        comment=comment.content,
+                        is_logged_in=True,
+                        comment_userid=commentedit_userid,
+                        key=commentedit_key,
+                        error="comment can't be empty")
+            else:
+                self.response.out.write("in else")
+
+class EditPost(Handler):
+
+    def get(self):
+        self.render("edit-post.html")
+
+    def post(self):
+        if utils.is_loggedIn(self):
+            post_userid = self.request.get('post-userid')
+            post_id = self.request.get('post-id')
+            post_editted = self.request.get('post-editted')
+            posteditted_userid = self.request.get('post_userid')
+            post_subject = self.request.get('post_subject')
+            post_content = self.request.get('post_content')
+            post_key = self.request.get('key')
+            edit_post = self.request.get('edit-post')
+
+            if edit_post and post_userid == utils.get_userID(self):
+                key = db.Key.from_path('Post', long(post_id))
+                post = db.get(key)
+                if post:
+                    self.render(
+                        "edit-post.html",
+                        subject=post.subject,
+                        content=post.content,
+                        is_logged_in=True,
+                        post_userid=post_userid,
+                        key=key)
+            elif post_editted and posteditted_userid == utils.get_userID(self):
+                post = db.get(post_key)
+                if post and post_subject and post_content:
+                    post.subject = post_subject
+                    post.content = post_content
+                    post.put()
+                    self.redirect('/blog')
+                else:
+                    self.render(
+                        "edit-post.html",
+                        subject=post_subject,
+                        content=post_content,
+                        is_logged_in=True,
+                        post_userid=posteditted_userid,
+                        key=post_key,
+                        error="something is missing!")
+        else:
+            self.response.out.write("in edit-post post method")
 
 
 class Signup(MainHandler):
@@ -383,23 +411,26 @@ class NewPostHandler(Handler):
         return t.render(params)
 
     def post(self):
-        subject = self.request.get("subject")
-        content = self.request.get("content")
-        if subject and content:
-            post = Post(subject=subject, content=content,
-                        user_id=utils.get_userID(self))
-            post.put()
-            self.redirect('/blog')
-        else:
-            message = "something is missing!"
-            self.render("newpost.html", subject=subject,
-                        content=content, error=message, is_logged_in=True)
+        if utils.is_loggedIn(self):
+            subject = self.request.get("subject")
+            content = self.request.get("content")
+            if subject and content:
+                post = Post(subject=subject, content=content,
+                            user_id=utils.get_userID(self))
+                post.put()
+                self.redirect('/blog')
+            else:
+                message = "something is missing!"
+                self.render("newpost.html", subject=subject,
+                            content=content, error=message, is_logged_in=True)
 
 
 app = webapp2.WSGIApplication([
     ('/blog/?', MainHandler),
     ('/blog/([0-9]+)', PostHandler),
     ('/blog/newpost', NewPostHandler),
+    ('/blog/edit-comment', EditComment),
+    ('/blog/edit-post', EditPost),
     ('/signup', Register),
     ('/login', Login),
     ('/logout', Logout),
